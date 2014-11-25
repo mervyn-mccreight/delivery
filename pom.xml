@@ -8,11 +8,21 @@
     <artifactId>delivery</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+
     <dependencies>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
+        </dependency>
+
+
+        <!-- HIBERNATE -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>4.2.16.Final</version>
+            <version>4.3.7.Final</version>
         </dependency>
 
         <!-- Hibernate uses jboss-logging for logging -->

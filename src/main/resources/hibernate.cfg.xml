@@ -52,7 +52,7 @@
         <property name="hbm2ddl.auto">create</property>
 
         <!-- Names the annotated entity class -->
-        <!--<mapping class="org.hibernate.tutorial.annotations.Event"/>-->
+        <mapping class="de.fhwedel.delivery.model.Ingredient"/>
 
     </session-factory>
 
