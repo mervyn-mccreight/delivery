@@ -28,6 +28,6 @@ public class PersistIngredientTest {
 
     @Test
     public void printStaticValuesTest() throws Exception {
-        txManager.printDB();
+        txManager.printTableOfEntityClass(Ingredient.class);
     }
 }

@@ -1,11 +1,13 @@
 package de.fhwedel.delivery.transaction;
 
 import de.fhwedel.delivery.model.Ingredient;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.criterion.Order;
 
 import java.util.List;
 
@@ -35,16 +37,19 @@ public class TxManager {
         session.close();
     }
 
-    public void printDB() {
+    public void printTableOfEntityClass(Class tableEntityClass) {
         Session session = sessionFactory.openSession();
         session.beginTransaction();
-        List list = session.createCriteria(Ingredient.class).list();
 
-        System.out.println("DB CONTENT:");
+        Criteria criteria = session.createCriteria(tableEntityClass);
+        criteria.addOrder(Order.asc("id"));
+        List list = criteria.list();
+
+        System.out.println("TABLE CONTENT:");
         System.out.println("------------");
 
-        for (Ingredient ingredient : (List<Ingredient>) list) {
-            System.out.println(ingredient);
+        for (Object entity : list) {
+            System.out.println(entity);
         }
 
         System.out.println("-----END-----");
