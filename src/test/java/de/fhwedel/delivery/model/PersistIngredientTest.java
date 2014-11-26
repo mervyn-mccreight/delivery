@@ -12,14 +12,8 @@ public class PersistIngredientTest {
     @Before
     public void setUp() throws Exception {
         txManager = new TxManager();
-        persistStaticIngredients();
     }
 
-    private void persistStaticIngredients() {
-        txManager.addIngredient(Ingredient.CHEESE);
-        txManager.addIngredient(Ingredient.SALAMI);
-        txManager.addIngredient(Ingredient.TOMATO_SAUCE);
-    }
 
     @After
     public void tearDown() throws Exception {
@@ -27,7 +21,31 @@ public class PersistIngredientTest {
     }
 
     @Test
-    public void printStaticValuesTest() throws Exception {
+    public void addPizza_pizzaAndIngredientsArePersisted() throws Exception {
+
+        Pizza pizza1 = Pizza.empty().addIngredient(Ingredient.TOMATO_SAUCE).addIngredient(Ingredient.CHEESE).addIngredient(Ingredient.SALAMI);
+        txManager.addPizza(pizza1);
+
+        Pizza pizza2 = Pizza.empty().addIngredient(Ingredient.CHEESE).addIngredient(Ingredient.SALAMI);
+        txManager.addPizza(pizza2);
+
+        txManager.printTableOfEntityClass(Pizza.class);
+        txManager.printTableOfEntityClass(Ingredient.class);
+
+        // TODO: Assert database contents
+    }
+
+    @Test
+    public void removePizza_pizzaIsRemovedIngredientsArePersisted() {
+        Pizza pizza1 = Pizza.empty().addIngredient(Ingredient.TOMATO_SAUCE).addIngredient(Ingredient.CHEESE).addIngredient(Ingredient.SALAMI);
+        txManager.addPizza(pizza1);
+
+        Pizza pizza2 = Pizza.empty().addIngredient(Ingredient.CHEESE).addIngredient(Ingredient.SALAMI);
+        txManager.addPizza(pizza2);
+
+        txManager.removePizza(pizza1);
+
+        txManager.printTableOfEntityClass(Pizza.class);
         txManager.printTableOfEntityClass(Ingredient.class);
     }
 }

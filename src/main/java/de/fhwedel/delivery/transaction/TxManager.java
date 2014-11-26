@@ -1,6 +1,7 @@
 package de.fhwedel.delivery.transaction;
 
 import de.fhwedel.delivery.model.Ingredient;
+import de.fhwedel.delivery.model.Pizza;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -33,6 +34,24 @@ public class TxManager {
 
         session.beginTransaction();
         session.save(toBeAdded);
+        session.getTransaction().commit();
+        session.close();
+    }
+
+    public void addPizza(Pizza pizza) {
+        Session session = sessionFactory.openSession();
+
+        session.beginTransaction();
+        session.save(pizza);
+        session.getTransaction().commit();
+        session.close();
+    }
+
+    public void removePizza(Pizza pizza) {
+        Session session = sessionFactory.openSession();
+
+        session.beginTransaction();
+        session.delete(pizza);
         session.getTransaction().commit();
         session.close();
     }
