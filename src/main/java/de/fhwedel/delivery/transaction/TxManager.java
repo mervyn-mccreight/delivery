@@ -1,8 +1,10 @@
 package de.fhwedel.delivery.transaction;
 
+import com.google.common.collect.Sets;
 import de.fhwedel.delivery.model.Ingredient;
 import de.fhwedel.delivery.model.Pizza;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistry;
@@ -11,6 +13,7 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Order;
 
 import java.util.List;
+import java.util.Set;
 
 public class TxManager {
     private SessionFactory sessionFactory;
@@ -54,6 +57,20 @@ public class TxManager {
         session.delete(pizza);
         session.getTransaction().commit();
         session.close();
+    }
+
+    public <T> Set<T> getTableEntities(Class<T> entityClass) {
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        Criteria criteria = session.createCriteria(entityClass);
+        criteria.addOrder(Order.asc("id"));
+        criteria.setFetchMode("ingredients", FetchMode.JOIN);
+        List list = criteria.list();
+        session.getTransaction().commit();
+        session.close();
+
+        return Sets.newHashSet(list);
     }
 
     public void printTableOfEntityClass(Class tableEntityClass) {

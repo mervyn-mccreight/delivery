@@ -2,6 +2,7 @@ package de.fhwedel.delivery.model;
 
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,10 +23,10 @@ public class Ingredient {
     private String name;
     private BigDecimal cost;
 
-    public Ingredient() {
+    private Ingredient() {
     }
 
-    private Ingredient(Long id, String name, BigDecimal cost) {
+    public Ingredient(Long id, String name, BigDecimal cost) {
         this.id = id;
         this.name = name;
         this.cost = cost;
@@ -66,5 +67,27 @@ public class Ingredient {
                 .addValue(this.name)
                 .addValue(this.cost)
                 .toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Ingredient that = (Ingredient) obj;
+
+        return Objects.equal(this.id, that.id)
+                && Objects.equal(this.name, that.name)
+                && Objects.equal(this.cost, that.cost);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.id, this.name, this.cost);
     }
 }

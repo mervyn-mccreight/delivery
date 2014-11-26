@@ -1,6 +1,7 @@
 package de.fhwedel.delivery.model;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
@@ -14,7 +15,7 @@ public class Pizza {
     private Long id;
     private List<Ingredient> ingredients;
 
-    public Pizza() {
+    private Pizza() {
     }
 
     public Pizza(List<Ingredient> ingredients) {
@@ -55,5 +56,26 @@ public class Pizza {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(Pizza.class).addValue(this.id).addValue(this.ingredients).toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Pizza that = (Pizza) obj;
+
+        return Objects.equal(this.id, that.id)
+                && Objects.equal(this.ingredients, that.ingredients);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.id, this.ingredients);
     }
 }
