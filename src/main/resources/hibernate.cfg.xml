@@ -55,6 +55,7 @@
         <mapping class="de.fhwedel.delivery.model.Ingredient"/>
         <mapping class="de.fhwedel.delivery.model.Pizza"/>
         <mapping class="de.fhwedel.delivery.model.Product"/>
+        <mapping class="de.fhwedel.delivery.model.Order"/>
     </session-factory>
 
 </hibernate-configuration>

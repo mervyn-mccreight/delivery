@@ -92,4 +92,14 @@ public class TxManager {
         session.getTransaction().commit();
         session.close();
     }
+
+    public void addOrder(de.fhwedel.delivery.model.Order order) {
+        Session session = sessionFactory.openSession();
+
+        session.beginTransaction();
+
+        session.save(order);
+        session.getTransaction().commit();
+        session.close();
+    }
 }

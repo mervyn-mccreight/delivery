@@ -68,4 +68,22 @@ public class DbPersistenceTest {
         assertThat(ingredients).hasSize(3);
         assertThat(ingredients).containsOnly(Ingredient.TOMATO_SAUCE, Ingredient.SALAMI, Ingredient.CHEESE);
     }
+
+    @Test
+    public void persistOrder() throws Exception {
+        Pizza productToOrder = Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE);
+        Order order = Order.empty().addProduct(productToOrder);
+
+        txManager.addOrder(order);
+
+        Set<Order> orders = txManager.getTableEntities(Order.class);
+
+        assertThat(orders).hasSize(1);
+        assertThat(orders).containsOnly(order);
+
+        Set<Pizza> pizzas = txManager.getTableEntities(Pizza.class);
+
+        assertThat(pizzas).hasSize(1);
+        assertThat(pizzas).containsOnly(productToOrder);
+    }
 }
