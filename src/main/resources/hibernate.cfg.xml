@@ -54,7 +54,7 @@
         <!-- Names the annotated entity class -->
         <mapping class="de.fhwedel.delivery.model.Ingredient"/>
         <mapping class="de.fhwedel.delivery.model.Pizza"/>
-
+        <mapping class="de.fhwedel.delivery.model.Product"/>
     </session-factory>
 
 </hibernate-configuration>
