@@ -12,8 +12,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "PIZZAS")
-public class Pizza {
-    private Long id;
+@PrimaryKeyJoinColumn(name="ID")
+public class Pizza extends Product {
     private List<Ingredient> ingredients;
 
     private Pizza() {
@@ -25,16 +25,6 @@ public class Pizza {
 
     public static Pizza empty() {
         return new Pizza(new ArrayList<Ingredient>());
-    }
-
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     @Column(nullable = false)
@@ -62,7 +52,7 @@ public class Pizza {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(Pizza.class).addValue(this.id).addValue(this.ingredients).toString();
+        return MoreObjects.toStringHelper(Pizza.class).addValue(this.getId()).addValue(this.ingredients).toString();
     }
 
     @Override
@@ -77,12 +67,12 @@ public class Pizza {
 
         Pizza that = (Pizza) obj;
 
-        return Objects.equal(this.id, that.id)
+        return Objects.equal(this.getId(), that.getId())
                 && Objects.equal(this.ingredients, that.ingredients);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this.id, this.ingredients);
+        return Objects.hashCode(this.getId(), this.ingredients);
     }
 }
