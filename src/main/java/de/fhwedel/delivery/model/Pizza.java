@@ -7,6 +7,7 @@ import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -38,6 +39,7 @@ public class Pizza {
 
     @Column(nullable = false)
     @ManyToMany
+    @OrderColumn(name="ingredients_index")
     @JoinColumn(name="INGREDIENT_ID")
     @Cascade({CascadeType.SAVE_UPDATE})
     public List<Ingredient> getIngredients() {
@@ -50,6 +52,11 @@ public class Pizza {
 
     public Pizza addIngredient(Ingredient ingredient) {
         ingredients.add(ingredient);
+        return this;
+    }
+
+    public Pizza addIngredients(Ingredient... toAdd) {
+        Collections.addAll(this.ingredients, toAdd);
         return this;
     }
 

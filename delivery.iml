@@ -11,6 +11,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: org.assertj:assertj-core:1.7.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:18.0" level="project" />
     <orderEntry type="library" name="Maven: org.assertj:assertj-core:1.7.0" level="project" />
     <orderEntry type="library" name="Maven: org.hibernate:hibernate-core:4.3.7.Final" level="project" />
