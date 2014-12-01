@@ -42,4 +42,9 @@ public class PizzaTest {
         assertThat(empty).isNotEqualTo(notEqualsEmpty);
         assertThat(salamiCheese).isNotEqualTo(notEqualsSalamiCheese);
     }
+
+    @Test
+    public void cost() throws Exception {
+        assertThat(salamiCheese.getCost()).isEqualTo(Ingredient.SALAMI.getCost().add(Ingredient.CHEESE.getCost()));
+    }
 }

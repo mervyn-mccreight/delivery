@@ -6,6 +6,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -75,5 +76,14 @@ public class Pizza extends Product {
     @Override
     public int hashCode() {
         return Objects.hashCode(this.getId(), this.ingredients);
+    }
+
+    @Override
+    public BigDecimal getCost() {
+        BigDecimal sum = new BigDecimal("0");
+        for (Ingredient ingredient : ingredients) {
+            sum = sum.add(ingredient.getCost());
+        }
+        return sum;
     }
 }

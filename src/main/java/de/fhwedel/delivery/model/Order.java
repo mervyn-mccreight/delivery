@@ -6,6 +6,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -80,5 +81,13 @@ public class Order {
     @Override
     public int hashCode() {
         return Objects.hashCode(id, products, billed);
+    }
+
+    public BigDecimal getCost() {
+        BigDecimal sum = new BigDecimal("0");
+        for (Product product : products) {
+            sum = sum.add(product.getCost());
+        }
+        return sum;
     }
 }

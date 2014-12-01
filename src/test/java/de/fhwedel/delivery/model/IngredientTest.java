@@ -33,4 +33,11 @@ public class IngredientTest {
         assertThat(zucker).isNotEqualTo(diffName);
         assertThat(zucker).isNotEqualTo(diffCost);
     }
+
+    @Test
+    public void cost() throws Exception {
+        Ingredient ingredient = new Ingredient(0l, "Zucker", new BigDecimal("5.00"));
+
+        assertThat(ingredient.getCost()).isEqualTo("5.00");
+    }
 }

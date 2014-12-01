@@ -1,6 +1,7 @@
 package de.fhwedel.delivery.model;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "PRODUCTS")
@@ -21,4 +22,6 @@ public abstract class Product {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public abstract BigDecimal getCost();
 }
