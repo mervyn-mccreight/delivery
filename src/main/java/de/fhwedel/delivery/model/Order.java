@@ -83,10 +83,10 @@ public class Order {
         return Objects.hashCode(id, products, billed);
     }
 
-    public BigDecimal getCost() {
+    public BigDecimal evaluateCost() {
         BigDecimal sum = new BigDecimal("0");
         for (Product product : products) {
-            sum = sum.add(product.getCost());
+            sum = sum.add(product.evaluateCost());
         }
         return sum;
     }

@@ -23,5 +23,5 @@ public abstract class Product {
         this.id = id;
     }
 
-    public abstract BigDecimal getCost();
+    public abstract BigDecimal evaluateCost();
 }

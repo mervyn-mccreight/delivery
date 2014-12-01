@@ -12,7 +12,7 @@ public class OrderTest {
     public void emptyCost() throws Exception {
         Order empty = Order.empty();
 
-        assertThat(empty.getCost()).isZero();
+        assertThat(empty.evaluateCost()).isZero();
     }
 
     @Test
@@ -22,7 +22,7 @@ public class OrderTest {
         Order order = Order.empty();
         order.addProduct(pizza);
 
-        assertThat(order.getCost()).isEqualTo(pizza.getCost());
+        assertThat(order.evaluateCost()).isEqualTo(pizza.evaluateCost());
     }
 
     @Test
@@ -34,6 +34,6 @@ public class OrderTest {
         order.addProduct(pizza1);
         order.addProduct(pizza2);
 
-        assertThat(order.getCost()).isEqualTo(pizza1.getCost().add(pizza2.getCost()));
+        assertThat(order.evaluateCost()).isEqualTo(pizza1.evaluateCost().add(pizza2.evaluateCost()));
     }
 }

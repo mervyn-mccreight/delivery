@@ -45,6 +45,6 @@ public class PizzaTest {
 
     @Test
     public void cost() throws Exception {
-        assertThat(salamiCheese.getCost()).isEqualTo(Ingredient.SALAMI.getCost().add(Ingredient.CHEESE.getCost()));
+        assertThat(salamiCheese.evaluateCost()).isEqualTo(Ingredient.SALAMI.getCost().add(Ingredient.CHEESE.getCost()));
     }
 }

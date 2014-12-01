@@ -1,8 +1,6 @@
 package de.fhwedel.delivery.transaction;
 
 import com.google.common.collect.Sets;
-import de.fhwedel.delivery.model.Ingredient;
-import de.fhwedel.delivery.model.Pizza;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
@@ -11,23 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 public class TxManager {
-    public void addIngredient(Session session, Ingredient toBeAdded) {
-        session.beginTransaction();
-        session.save(toBeAdded);
-        session.getTransaction().commit();
-    }
-
-    public void addPizza(Session session, Pizza pizza) {
-        session.beginTransaction();
-        session.save(pizza);
-        session.getTransaction().commit();
-    }
-
-    public void removePizza(Session session, Pizza pizza) {
-        session.beginTransaction();
-        session.delete(pizza);
-        session.getTransaction().commit();
-    }
 
     public <T> Set<T> getTableEntities(Session session, Class<T> entityClass) {
         session.beginTransaction();
@@ -58,10 +39,15 @@ public class TxManager {
         session.getTransaction().commit();
     }
 
-    public void addOrder(Session session, de.fhwedel.delivery.model.Order order) {
+    public void addEntity(Session session, Object object) {
         session.beginTransaction();
+        session.save(object);
+        session.getTransaction().commit();
+    }
 
-        session.save(order);
+    public void removeEntity(Session session, Object object) {
+        session.beginTransaction();
+        session.delete(object);
         session.getTransaction().commit();
     }
 }

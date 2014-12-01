@@ -79,7 +79,7 @@ public class Pizza extends Product {
     }
 
     @Override
-    public BigDecimal getCost() {
+    public BigDecimal evaluateCost() {
         BigDecimal sum = new BigDecimal("0");
         for (Ingredient ingredient : ingredients) {
             sum = sum.add(ingredient.getCost());
