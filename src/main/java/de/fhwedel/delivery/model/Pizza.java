@@ -56,7 +56,6 @@ public class Pizza extends Product {
         return MoreObjects.toStringHelper(Pizza.class).addValue(this.getId()).addValue(this.ingredients).toString();
     }
 
-    //todo: equals mit super() statt getId.
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

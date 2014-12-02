@@ -8,6 +8,35 @@ public class OrderTest {
 
     // TODO: test equals, etc
 
+
+    @Test
+    public void nonEquality() throws Exception {
+        Order given = Order.empty();
+        Object anotherObject = new Object();
+        assertThat(given).isNotEqualTo(anotherObject);
+
+        Order anotherOrder = Order.empty().addProducts(Pizza.empty());
+        assertThat(given).isNotEqualTo(anotherOrder);
+    }
+
+    @Test
+    public void simpleEquality() throws Exception {
+        Order given = Order.empty();
+        Order equal = Order.empty();
+
+        assertThat(given).isEqualTo(equal);
+        assertThat(given.hashCode()).isEqualTo(equal.hashCode());
+    }
+
+    @Test
+    public void complexEquality() throws Exception {
+        Order given = Order.empty().addProducts(Pizza.empty().addIngredients(Ingredient.CHEESE));
+        Order equal = Order.empty().addProducts(Pizza.empty().addIngredients(Ingredient.CHEESE));
+
+        assertThat(given).isEqualTo(equal);
+        assertThat(given.hashCode()).isEqualTo(equal.hashCode());
+    }
+
     @Test
     public void emptyCost() throws Exception {
         Order empty = Order.empty();
