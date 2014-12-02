@@ -6,9 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class OrderTest {
 
-    // TODO: test equals, etc
-
-
     @Test
     public void nonEquality() throws Exception {
         Order given = Order.empty();
