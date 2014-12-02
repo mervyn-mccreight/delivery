@@ -79,7 +79,7 @@ public class DbPersistenceTest {
     @Test
     public void persistOrder() throws Exception {
         Pizza productToOrder = Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE);
-        Order order = Order.empty().addProduct(productToOrder);
+        Order order = Order.empty().addProducts(productToOrder);
 
         txManager.addEntity(session, order);
 
@@ -94,14 +94,59 @@ public class DbPersistenceTest {
         assertThat(pizzas).containsOnly(productToOrder);
     }
 
-    // TODO: test deletion of products when order is removed
+    @Test
+    public void deleteSingleItemOrder() throws Exception {
+        Pizza productToOrder = Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE);
+        Order order = Order.empty().addProducts(productToOrder);
+
+        txManager.addEntity(session, order);
+
+        Set<Order> orders = txManager.getTableEntities(session, Order.class);
+
+        assertThat(orders).hasSize(1);
+        assertThat(orders).containsOnly(order);
+
+        txManager.removeEntity(session, order);
+
+        Set<Pizza> pizzas = txManager.getTableEntities(session, Pizza.class);
+
+        assertThat(pizzas).hasSize(0);
+        assertThat(pizzas).isEmpty();
+    }
+
+    @Test
+    public void deleteOrderOtherProductsRemain() throws Exception {
+        Pizza productToOrder1 = Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE);
+        Pizza productToOrder2 = Pizza.empty().addIngredients(Ingredient.CHEESE);
+        Order order1 = Order.empty().addProducts(productToOrder1);
+        Order order2 = Order.empty().addProducts(productToOrder2);
+
+        txManager.addEntity(session, order1);
+        txManager.addEntity(session, order2);
+
+        Set<Order> orders = txManager.getTableEntities(session, Order.class);
+
+        assertThat(orders).hasSize(2);
+        assertThat(orders).containsOnly(order1, order2);
+
+        txManager.removeEntity(session, order1);
+
+        orders = txManager.getTableEntities(session, Order.class);
+        assertThat(orders).hasSize(1);
+        assertThat(orders).containsOnly(order2);
+
+        Set<Pizza> pizzas = txManager.getTableEntities(session, Pizza.class);
+
+        assertThat(pizzas).hasSize(1);
+        assertThat(pizzas).containsOnly(productToOrder2);
+    }
 
     @Test
     public void persistCustomer() throws Exception {
         Pizza pizza1 = Pizza.empty().addIngredients(Ingredient.CHEESE);
         Pizza pizza2 = Pizza.empty().addIngredients(Ingredient.CHEESE, Ingredient.TOMATO_SAUCE);
-        Order order1 = Order.empty().addProduct(pizza1);
-        Order order2 = Order.empty().addProduct(pizza2);
+        Order order1 = Order.empty().addProducts(pizza1);
+        Order order2 = Order.empty().addProducts(pizza2);
 
         Customer hansMeier = new Customer("Hans", "Meier");
         hansMeier.addOrder(order1).addOrder(order2);

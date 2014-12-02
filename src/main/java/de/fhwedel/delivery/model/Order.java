@@ -7,6 +7,7 @@ import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -56,8 +57,8 @@ public class Order {
         this.billed = billed;
     }
 
-    public Order addProduct(Product product) {
-        products.add(product);
+    public Order addProducts(Product... products) {
+        Collections.addAll(this.products, products);
         return this;
     }
 

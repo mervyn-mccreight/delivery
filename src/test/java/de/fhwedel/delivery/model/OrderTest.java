@@ -20,7 +20,8 @@ public class OrderTest {
         Pizza pizza = Pizza.empty().addIngredients(Ingredient.CHEESE, Ingredient.SALAMI);
 
         Order order = Order.empty();
-        order.addProduct(pizza);
+        Order result;
+        order.addProducts(pizza);
 
         assertThat(order.evaluateCost()).isEqualTo(pizza.evaluateCost());
     }
@@ -31,8 +32,10 @@ public class OrderTest {
         Pizza pizza2 = Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE, Ingredient.SALAMI);
 
         Order order = Order.empty();
-        order.addProduct(pizza1);
-        order.addProduct(pizza2);
+        Order result1;
+        order.addProducts(pizza1);
+        Order result;
+        order.addProducts(pizza2);
 
         assertThat(order.evaluateCost()).isEqualTo(pizza1.evaluateCost().add(pizza2.evaluateCost()));
     }
