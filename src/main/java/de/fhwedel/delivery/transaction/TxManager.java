@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 
 import java.util.List;
 import java.util.Set;
@@ -49,5 +50,18 @@ public class TxManager {
         session.beginTransaction();
         session.delete(object);
         session.getTransaction().commit();
+    }
+
+    public <T> T findEntityById(Session session, Class<T> entityClass, Long id) {
+        session.beginTransaction();
+        Criteria criteria = session.createCriteria(entityClass);
+        criteria.add(Restrictions.eq("id", id));
+        Object o = criteria.uniqueResult();
+
+        if (o != null) {
+            return (T) o;
+        }
+
+        return null;
     }
 }
