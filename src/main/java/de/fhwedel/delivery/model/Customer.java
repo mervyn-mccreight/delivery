@@ -17,7 +17,6 @@ public class Customer {
     private Address address;
 
     private Customer() {
-
     }
 
     public Customer(String firstName, String surName, Address address) {
@@ -73,9 +72,9 @@ public class Customer {
         this.surName = surName;
     }
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "ADDRESS_ID")
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cascade({org.hibernate.annotations.CascadeType.ALL})
     public Address getAddress() {
         return address;
     }

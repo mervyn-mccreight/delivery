@@ -14,7 +14,7 @@ public class Address {
     private String city;
     private String country;
 
-    public Address() {
+    private Address() {
     }
 
     public Address(String street, String zip, String city, String country) {

@@ -161,4 +161,20 @@ public class DbPersistenceTest {
         assertThat(orders).hasSize(hansMeier.getOrders().size());
         assertThat(orders).containsOnlyElementsOf(hansMeier.getOrders());
     }
+
+    @Test
+    public void deleteCustomer() throws Exception {
+        Customer hansMeier = new Customer("Hans", "Meier", new Address("Straße 1", "12345", "Trollhausen", "Schlumpfenland"));
+
+        txManager.addEntity(session, hansMeier);
+
+        Set<Customer> customers = txManager.getTableEntities(session, Customer.class);
+        assertThat(customers).hasSize(1);
+        assertThat(customers).containsOnly(hansMeier);
+
+        txManager.removeEntity(session, hansMeier);
+
+        Set<Address> addresses = txManager.getTableEntities(session, Address.class);
+        assertThat(addresses).isEmpty();
+    }
 }
