@@ -148,7 +148,7 @@ public class DbPersistenceTest {
         Order order1 = Order.empty().addProducts(pizza1);
         Order order2 = Order.empty().addProducts(pizza2);
 
-        Customer hansMeier = new Customer("Hans", "Meier");
+        Customer hansMeier = new Customer("Hans", "Meier", new Address("Straße 1", "12345", "Trollhausen", "Schlumpfenland"));
         hansMeier.addOrder(order1).addOrder(order2);
 
         txManager.addEntity(session, hansMeier);

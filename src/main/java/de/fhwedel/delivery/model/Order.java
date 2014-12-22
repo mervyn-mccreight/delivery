@@ -16,6 +16,8 @@ public class Order {
     private Long id;
     private List<Product> products = Lists.newArrayList();
     private boolean billed = false;
+    private boolean prepared = false;
+    private boolean delivered = false;
 
     private Order() {
     }
@@ -48,6 +50,11 @@ public class Order {
         this.products = products;
     }
 
+    public Order addProducts(Product... products) {
+        Collections.addAll(this.products, products);
+        return this;
+    }
+
     @Column(nullable = false)
     public boolean isBilled() {
         return billed;
@@ -57,9 +64,22 @@ public class Order {
         this.billed = billed;
     }
 
-    public Order addProducts(Product... products) {
-        Collections.addAll(this.products, products);
-        return this;
+    @Column(nullable = false)
+    public boolean isPrepared() {
+        return prepared;
+    }
+
+    public void setPrepared(boolean prepared) {
+        this.prepared = prepared;
+    }
+
+    @Column(nullable = false)
+    public boolean isDelivered() {
+        return delivered;
+    }
+
+    public void setDelivered(boolean delivered) {
+        this.delivered = delivered;
     }
 
     @Override

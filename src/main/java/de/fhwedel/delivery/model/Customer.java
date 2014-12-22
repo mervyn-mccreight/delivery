@@ -14,14 +14,16 @@ public class Customer {
     private List<Order> orders = Lists.newArrayList();
     private String firstName;
     private String surName;
+    private Address address;
 
     private Customer() {
 
     }
 
-    public Customer(String firstName, String surName) {
+    public Customer(String firstName, String surName, Address address) {
         this.firstName = firstName;
         this.surName = surName;
+        this.address = address;
     }
 
     @Id
@@ -71,9 +73,20 @@ public class Customer {
         this.surName = surName;
     }
 
+    @ManyToOne
+    @JoinColumn(name = "ADDRESS_ID")
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, orders, firstName, surName);
+        return Objects.hashCode(id, orders, firstName, surName, address);
     }
 
     @Override
@@ -91,6 +104,7 @@ public class Customer {
         return Objects.equal(this.id, that.id)
                 && Objects.equal(this.orders, that.orders)
                 && Objects.equal(this.firstName, that.firstName)
-                && Objects.equal(this.surName, that.surName);
+                && Objects.equal(this.surName, that.surName)
+                && Objects.equal(this.address, that.address);
     }
 }

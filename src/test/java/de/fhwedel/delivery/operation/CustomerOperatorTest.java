@@ -1,9 +1,6 @@
 package de.fhwedel.delivery.operation;
 
-import de.fhwedel.delivery.model.Customer;
-import de.fhwedel.delivery.model.Ingredient;
-import de.fhwedel.delivery.model.Order;
-import de.fhwedel.delivery.model.Pizza;
+import de.fhwedel.delivery.model.*;
 import de.fhwedel.delivery.transaction.SessionManager;
 import de.fhwedel.delivery.transaction.TxManager;
 import org.hibernate.Session;
@@ -34,7 +31,7 @@ public class CustomerOperatorTest {
 
     @Test
     public void orderWithNewCustomer() throws Exception {
-        Customer customer = new Customer("Heinz", "Egon");
+        Customer customer = new Customer("Heinz", "Egon", new Address("Straße 1", "12345", "Trollhausen", "Schlumpfenland"));
         Pizza pizza = Pizza.empty().addIngredient(Ingredient.CHEESE);
 
         Long orderId = CustomerOperator.order(session, customer, pizza);
