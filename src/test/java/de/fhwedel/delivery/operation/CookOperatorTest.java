@@ -59,6 +59,16 @@ public class CookOperatorTest {
         assertThat(order.isPrepared()).isTrue();
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void testTryToPrepareAlreadyPreparedOrder() throws Exception {
+        Order empty = Order.empty();
+        empty.setPrepared(true);
+
+        txManager.addEntity(session, empty);
+
+        CookOperator.prepareOrder(session, empty);
+    }
+
     @Test
     public void testGetUnpreparedOrders() throws Exception {
         List<Order> unprepared = Lists.newArrayList();
