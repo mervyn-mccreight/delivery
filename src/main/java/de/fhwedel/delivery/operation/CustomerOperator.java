@@ -16,4 +16,14 @@ public class CustomerOperator {
 
         return order.getId();
     }
+
+    public static Long orderWithOnlinePayment(Session session, Customer customer, Product... products) {
+        Order order = Order.empty().addProducts(products);
+        order.setBilled(true);
+        customer.addOrder(order);
+
+        txManager.addEntity(session, customer);
+
+        return order.getId();
+    }
 }
