@@ -17,7 +17,7 @@ public class Order {
     private List<Product> products = Lists.newArrayList();
     private boolean billed = false;
     private boolean prepared = false;
-    private boolean delivered = false; // TODO: implement DeliveryGuyOperator
+    private boolean delivered = false;
 
     private Order() {
     }
