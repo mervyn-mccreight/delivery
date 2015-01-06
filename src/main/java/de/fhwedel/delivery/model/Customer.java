@@ -73,6 +73,7 @@ public class Customer {
         this.surName = surName;
     }
 
+    // TODO: value-type?
     @OneToOne
     @JoinColumn(name = "ADDRESS_ID")
     @Cascade({org.hibernate.annotations.CascadeType.ALL})

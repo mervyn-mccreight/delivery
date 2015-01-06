@@ -28,10 +28,10 @@ public class Pizza extends Product {
         return new Pizza(new ArrayList<Ingredient>());
     }
 
+    //TODO: liste unnoetig. reihenfolge nicht relevant. set/multiset? (eher multiset wg. doppelten zutaten?)
     @Column(nullable = false)
     @ManyToMany
     @OrderColumn(name="ingredients_index")
-    @JoinColumn(name="INGREDIENT_ID")
     @Cascade({CascadeType.SAVE_UPDATE})
     public List<Ingredient> getIngredients() {
         return ingredients;
