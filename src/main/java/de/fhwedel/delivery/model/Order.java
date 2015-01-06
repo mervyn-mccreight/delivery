@@ -37,10 +37,11 @@ public class Order {
         this.id = id;
     }
 
+    //TODO: liste unnoetig. set? multiset?
     @Column(nullable = false)
     @OneToMany
     @OrderColumn(name="PRODUCT_INDEX")
-    @JoinColumn(name="PRODUCT_ID")
+    @JoinColumn(name="ORDER_ID")
     @Cascade({CascadeType.ALL})
     public List<Product> getProducts() {
         return products;

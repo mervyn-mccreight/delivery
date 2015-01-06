@@ -36,10 +36,11 @@ public class Customer {
         this.id = id;
     }
 
+    //TODO: liste hier unnoetig. set? multiset? reihenfolge vollkommen egal!
     @Column(nullable = false)
     @OneToMany
     @OrderColumn(name = "ORDER_INDEX")
-    @JoinColumn(name = "ORDER_ID")
+    @JoinColumn(name = "CUSTOMER_ID")
     @Cascade({org.hibernate.annotations.CascadeType.ALL})
     public List<Order> getOrders() {
         return orders;
