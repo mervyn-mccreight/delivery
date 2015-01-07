@@ -42,7 +42,7 @@ public class TxManager {
 
     public void addEntity(Session session, Object object) {
         session.beginTransaction();
-        session.save(object);
+        session.saveOrUpdate(object);
         session.getTransaction().commit();
     }
 

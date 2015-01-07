@@ -3,6 +3,7 @@ package de.fhwedel.delivery.model;
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -72,9 +73,9 @@ public class Customer {
     }
 
     // TODO: value-type?
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "ADDRESS_ID")
-    @Cascade({org.hibernate.annotations.CascadeType.ALL})
+    @Cascade({CascadeType.ALL})
     public Address getAddress() {
         return address;
     }

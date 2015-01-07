@@ -177,4 +177,35 @@ public class DbPersistenceTest {
         Set<Address> addresses = txManager.getTableEntities(session, Address.class);
         assertThat(addresses).isEmpty();
     }
+
+    @Test
+    public void customersWithSameAddress() throws Exception {
+        Address sharedAddress = new Address("ABC-Straße", "12345", "Trollhausen", "Schlumpfenland");
+        Customer hansMeier = new Customer("Hans", "Meier", sharedAddress);
+        Customer petraMeier = new Customer("Petra", "Meier", sharedAddress);
+
+        txManager.addEntity(session, hansMeier);
+        txManager.addEntity(session, petraMeier);
+
+        Set<Address> addresses = txManager.getTableEntities(session, Address.class);
+        assertThat(addresses).hasSize(1);
+        assertThat(addresses).containsOnly(sharedAddress);
+    }
+
+    @Test
+    public void customersWithSameAddressDeleteOneCustomer_addressStillExists() throws Exception {
+        Address sharedAddress = new Address("ABC-Straße", "12345", "Trollhausen", "Schlumpfenland");
+        Customer petraMeier = new Customer("Petra", "Meier", sharedAddress);
+
+        txManager.addEntity(session, new Customer("Hans", "Meier", sharedAddress));
+        txManager.addEntity(session, petraMeier);
+
+        assertThat(txManager.getTableEntities(session, Address.class)).hasSize(1);
+        assertThat(txManager.getTableEntities(session, Address.class)).containsOnly(sharedAddress);
+
+        txManager.removeEntity(session, petraMeier);
+
+        assertThat(txManager.getTableEntities(session, Customer.class)).hasSize(1);
+        assertThat(txManager.getTableEntities(session, Address.class)).hasSize(1);
+    }
 }
