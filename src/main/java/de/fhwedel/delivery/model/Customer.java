@@ -1,17 +1,17 @@
 package de.fhwedel.delivery.model;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "CUSTOMERS")
 public class Customer {
     private Long id;
-    private List<Order> orders = Lists.newArrayList();
+    private Set<Order> orders = Sets.newHashSet();
     private String firstName;
     private String surName;
     private Address address;
@@ -36,17 +36,15 @@ public class Customer {
         this.id = id;
     }
 
-    //TODO: liste hier unnoetig. set? multiset? reihenfolge vollkommen egal!
     @Column(nullable = false)
     @OneToMany
-    @OrderColumn(name = "ORDER_INDEX")
     @JoinColumn(name = "CUSTOMER_ID")
     @Cascade({org.hibernate.annotations.CascadeType.ALL})
-    public List<Order> getOrders() {
+    public Set<Order> getOrders() {
         return orders;
     }
 
-    public void setOrders(List<Order> orders) {
+    public void setOrders(Set<Order> orders) {
         this.orders = orders;
     }
 
