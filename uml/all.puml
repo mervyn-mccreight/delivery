@@ -1,0 +1,54 @@
+@startuml
+
+title Pizza Service
+skinparam monochrome true
+skinparam classBackgroundColor #ffffff
+skinparam stereoTypeCBackgroundColor #ffffff
+skinparam stereoTypeABackgroundColor #ffffff
+skinparam shadowing false
+
+abstract class Product {
+    -Long id
+    +BigDecimal evaluateCost()
+}
+
+class Pizza
+
+class Ingredient {
+    -Long id
+    -String name
+    -BigDecimal cost
+}
+
+Pizza "1" *- "n" Ingredient
+Product <|-- Pizza
+
+class Order {
+    -Long id
+    -Boolean billed
+    -Boolean prepared
+    -Boolean delivered
+    +BigDecimal evaluateCost()
+}
+
+Order "1" o- "n" Product
+
+class Customer {
+    -Long id
+    -String firstName
+    -String surName
+}
+
+Customer "1" *- "n" Order
+
+class Address {
+    -Long id
+    -String street
+    -String zip
+    -String city
+    -String country
+}
+
+Customer "n" o-left- "1" Address
+
+@enduml
