@@ -17,6 +17,10 @@ public class Address {
     private Address() {
     }
 
+    public Address(Long id) {
+        this.id = id;
+    }
+
     public Address(String street, String zip, String city, String country) {
         this.street = street;
         this.zip = zip;

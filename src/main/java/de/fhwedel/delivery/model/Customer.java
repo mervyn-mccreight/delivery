@@ -75,7 +75,7 @@ public class Customer {
     // TODO: value-type?
     @ManyToOne
     @JoinColumn(name = "ADDRESS_ID")
-    @Cascade({CascadeType.ALL})
+    @Cascade({CascadeType.SAVE_UPDATE})
     public Address getAddress() {
         return address;
     }

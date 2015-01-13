@@ -1,5 +1,6 @@
 package de.fhwedel.delivery.model;
 
+import de.fhwedel.delivery.repository.CustomerRepository;
 import de.fhwedel.delivery.transaction.SessionManager;
 import de.fhwedel.delivery.transaction.TxManager;
 import org.hibernate.Session;
@@ -172,7 +173,7 @@ public class DbPersistenceTest {
         assertThat(customers).hasSize(1);
         assertThat(customers).containsOnly(hansMeier);
 
-        txManager.removeEntity(session, hansMeier);
+        CustomerRepository.deleteCustomer(session, hansMeier);
 
         Set<Address> addresses = txManager.getTableEntities(session, Address.class);
         assertThat(addresses).isEmpty();
@@ -200,12 +201,28 @@ public class DbPersistenceTest {
         txManager.addEntity(session, new Customer("Hans", "Meier", sharedAddress));
         txManager.addEntity(session, petraMeier);
 
-        assertThat(txManager.getTableEntities(session, Address.class)).hasSize(1);
-        assertThat(txManager.getTableEntities(session, Address.class)).containsOnly(sharedAddress);
-
-        txManager.removeEntity(session, petraMeier);
+        CustomerRepository.deleteCustomer(session, petraMeier);
 
         assertThat(txManager.getTableEntities(session, Customer.class)).hasSize(1);
         assertThat(txManager.getTableEntities(session, Address.class)).hasSize(1);
+    }
+
+    @Test
+    public void customersWithSameAddressDeleteBothCustomers_addressIsDeleted() throws Exception {
+        Address sharedAddress = new Address("ABC-Straße", "12345", "Trollhausen", "Schlumpfenland");
+        Customer petraMeier = new Customer("Petra", "Meier", sharedAddress);
+
+        Customer hansMeier = new Customer("Hans", "Meier", sharedAddress);
+        txManager.addEntity(session, hansMeier);
+        txManager.addEntity(session, petraMeier);
+
+        assertThat(txManager.getTableEntities(session, Address.class)).hasSize(1);
+        assertThat(txManager.getTableEntities(session, Address.class)).containsOnly(sharedAddress);
+
+        CustomerRepository.deleteCustomer(session, petraMeier);
+        CustomerRepository.deleteCustomer(session, hansMeier);
+
+        assertThat(txManager.getTableEntities(session, Customer.class)).hasSize(0);
+        assertThat(txManager.getTableEntities(session, Address.class)).hasSize(0);
     }
 }
