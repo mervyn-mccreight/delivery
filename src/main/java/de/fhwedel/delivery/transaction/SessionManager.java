@@ -7,10 +7,11 @@ import org.hibernate.cfg.Configuration;
 
 public class SessionManager {
 
+    public static final Configuration cfg = new Configuration().configure();
+
     public static SessionFactory createSessionFactory() {
-        Configuration configuration = new Configuration().configure();
-        StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
-        return configuration.buildSessionFactory(serviceRegistry);
+        StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(cfg.getProperties()).build();
+        return cfg.buildSessionFactory(serviceRegistry);
     }
 
 }
