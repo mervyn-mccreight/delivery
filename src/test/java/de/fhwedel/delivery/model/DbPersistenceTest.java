@@ -1,5 +1,6 @@
 package de.fhwedel.delivery.model;
 
+import com.google.common.collect.Lists;
 import de.fhwedel.delivery.repository.CustomerRepository;
 import de.fhwedel.delivery.transaction.SessionManager;
 import de.fhwedel.delivery.transaction.TxManager;
@@ -9,6 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collection;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,6 +46,40 @@ public class DbPersistenceTest {
 
         assertThat(pizzas).hasSize(2);
         assertThat(pizzas).containsOnly(pizza1, pizza2);
+    }
+
+    @Test
+    public void pizzaWithSameIngredientTwice_ingredientIsPersistedTwice() throws Exception {
+        Pizza doubleCheese = Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE, Ingredient.CHEESE, Ingredient.CHEESE);
+
+        txManager.addEntity(session, doubleCheese);
+
+        Set<Pizza> pizzas = txManager.getTableEntities(session, Pizza.class);
+
+        Pizza dbDoubleCheese = pizzas.iterator().next();
+
+        assertThat(dbDoubleCheese.getIngredients()).hasSize(3);
+
+        Collection<Ingredient> ingredients = dbDoubleCheese.getIngredients();
+
+        assertThat(countElementsInCollection(Ingredient.TOMATO_SAUCE, ingredients)).isEqualTo(1);
+        assertThat(countElementsInCollection(Ingredient.CHEESE, ingredients)).isEqualTo(2);
+    }
+
+    private <T> int countElementsInCollection(T toCount, Collection<T> toCountIn) {
+        if (toCountIn.isEmpty()) {
+            return 0;
+        }
+
+        T next = toCountIn.iterator().next();
+        Collection toCountInWithout = Lists.newArrayList(toCountIn);
+        toCountInWithout.remove(next);
+
+        if (next.equals(toCount)) {
+            return 1 + countElementsInCollection(toCount, toCountInWithout);
+        }
+
+        return countElementsInCollection(toCount, toCountInWithout);
     }
 
     @Test

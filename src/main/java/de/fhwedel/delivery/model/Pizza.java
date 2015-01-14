@@ -8,19 +8,19 @@ import org.hibernate.annotations.CascadeType;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 @Entity
 @Table(name = "PIZZAS")
 @PrimaryKeyJoinColumn(name="ID")
 public class Pizza extends Product {
-    private List<Ingredient> ingredients;
+    private Collection<Ingredient> ingredients;
 
     private Pizza() {
     }
 
-    public Pizza(List<Ingredient> ingredients) {
+    private Pizza(Collection<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
 
@@ -28,16 +28,14 @@ public class Pizza extends Product {
         return new Pizza(new ArrayList<Ingredient>());
     }
 
-    //TODO: liste unnoetig. reihenfolge nicht relevant. set/multiset? (eher multiset wg. doppelten zutaten?)
     @Column(nullable = false)
     @ManyToMany
-    @OrderColumn(name="ingredients_index")
     @Cascade({CascadeType.SAVE_UPDATE})
-    public List<Ingredient> getIngredients() {
+    public Collection<Ingredient> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(List<Ingredient> ingredients) {
+    public void setIngredients(Collection<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
 
