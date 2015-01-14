@@ -1,20 +1,20 @@
 package de.fhwedel.delivery.model;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "ORDERS")
 public class Order {
     private Long id;
-    private List<Product> products = Lists.newArrayList();
+    private Set<Product> products = Sets.newHashSet();
     private boolean billed = false;
     private boolean prepared = false;
     private boolean delivered = false;
@@ -37,17 +37,15 @@ public class Order {
         this.id = id;
     }
 
-    //TODO: liste unnoetig. set? multiset?
     @Column(nullable = false)
     @OneToMany
-    @OrderColumn(name="PRODUCT_INDEX")
     @JoinColumn(name="ORDER_ID")
     @Cascade({CascadeType.ALL})
-    public List<Product> getProducts() {
+    public Set<Product> getProducts() {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
+    public void setProducts(Set<Product> products) {
         this.products = products;
     }
 
