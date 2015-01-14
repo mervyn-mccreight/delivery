@@ -72,7 +72,6 @@ public class Customer {
         this.surName = surName;
     }
 
-    // TODO: value-type?
     @ManyToOne
     @JoinColumn(name = "ADDRESS_ID")
     @Cascade({CascadeType.SAVE_UPDATE})
