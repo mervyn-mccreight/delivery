@@ -30,17 +30,17 @@ public class CustomerOperatorTest {
     }
 
     @Test
-    public void orderWithNewCustomer() throws Exception {
+    public void purchaseWithNewCustomer() throws Exception {
         Customer customer = new Customer("Heinz", "Egon", new Address("Straße 1", "12345", "Trollhausen", "Schlumpfenland"));
         Pizza pizza = Pizza.empty().addIngredient(Ingredient.CHEESE);
 
-        Long orderId = CustomerOperator.order(session, customer, pizza);
+        Long purchaseId = CustomerOperator.purchase(session, customer, pizza);
 
-        assertThat(orderId).isNotNull();
+        assertThat(purchaseId).isNotNull();
 
-        Order order = txManager.findEntityById(session, Order.class, orderId);
+        Purchase purchase = txManager.findEntityById(session, Purchase.class, purchaseId);
 
-        assertThat(order).isNotNull();
-        assertThat(order.getProducts()).containsOnly(pizza);
+        assertThat(purchase).isNotNull();
+        assertThat(purchase.getProducts()).containsOnly(pizza);
     }
 }

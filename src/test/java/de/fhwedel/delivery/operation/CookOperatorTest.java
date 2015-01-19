@@ -3,9 +3,7 @@ package de.fhwedel.delivery.operation;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import de.fhwedel.delivery.model.Ingredient;
-import de.fhwedel.delivery.model.Order;
-import de.fhwedel.delivery.model.Pizza;
+import de.fhwedel.delivery.model.*;
 import de.fhwedel.delivery.transaction.SessionManager;
 import de.fhwedel.delivery.transaction.TxManager;
 import org.hibernate.Session;
@@ -23,12 +21,14 @@ public class CookOperatorTest {
     private TxManager txManager;
     private SessionFactory sessionFactory;
     private Session session;
+    private Customer customer;
 
     @Before
     public void setUp() throws Exception {
         txManager = new TxManager();
         sessionFactory = SessionManager.createSessionFactory();
         session = sessionFactory.openSession();
+        customer = new Customer("Hans", "Meier", new Address("Trollstraße 1337", "12345", "Trollstadt", "Trololo"));
     }
 
     @After
@@ -38,68 +38,72 @@ public class CookOperatorTest {
     }
 
     @Test
-    public void testPrepareOrder() throws Exception {
-        Order empty = Order.empty();
+    public void testPreparePurchase() throws Exception {
+        Purchase empty = Purchase.empty();
+        customer.addPurchase(empty);
 
-        txManager.addEntity(session, empty);
+        txManager.addEntity(session, customer);
 
-        Set<Order> tableEntities = txManager.getTableEntities(session, Order.class);
+        Set<Purchase> tableEntities = txManager.getTableEntities(session, Purchase.class);
         assertThat(tableEntities).hasSize(1);
-        Order onlyElement = Iterables.getOnlyElement(tableEntities);
+        Purchase onlyElement = Iterables.getOnlyElement(tableEntities);
 
         assertThat(onlyElement.isPrepared()).isFalse();
 
-        CookOperator.prepareOrder(session, empty);
+        CookOperator.preparePurchase(session, empty);
 
-        Set<Order> orders = txManager.getTableEntities(session, Order.class);
+        Set<Purchase> purchases = txManager.getTableEntities(session, Purchase.class);
 
-        assertThat(orders).hasSize(1);
-        Order order = Iterables.getOnlyElement(orders);
+        assertThat(purchases).hasSize(1);
+        Purchase purchase = Iterables.getOnlyElement(purchases);
 
-        assertThat(order.isPrepared()).isTrue();
+        assertThat(purchase.isPrepared()).isTrue();
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testTryToPrepareAlreadyPreparedOrder() throws Exception {
-        Order empty = Order.empty();
+    public void testTryToPrepareAlreadyPreparedPurchase() throws Exception {
+        Purchase empty = Purchase.empty();
         empty.setPrepared(true);
 
-        txManager.addEntity(session, empty);
+        customer.addPurchase(empty);
+        txManager.addEntity(session, customer);
 
-        CookOperator.prepareOrder(session, empty);
+        CookOperator.preparePurchase(session, empty);
     }
 
     @Test
-    public void testGetUnpreparedOrders() throws Exception {
-        List<Order> unprepared = Lists.newArrayList();
-        List<Order> prepared = Lists.newArrayList();
+    public void testGetUnpreparedPurchases() throws Exception {
+        List<Purchase> unprepared = Lists.newArrayList();
+        List<Purchase> prepared = Lists.newArrayList();
 
-        unprepared.add(Order.empty().addProducts(Pizza.empty()));
-        unprepared.add(Order.empty().addProducts(Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE, Ingredient.CHEESE)));
+        unprepared.add(Purchase.empty().addProducts(Pizza.empty()));
+        unprepared.add(Purchase.empty().addProducts(Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE, Ingredient.CHEESE)));
 
-        Order emptyAndPrepared = Order.empty();
+        Purchase emptyAndPrepared = Purchase.empty();
         emptyAndPrepared.setPrepared(true);
         prepared.add(emptyAndPrepared);
 
-        Order pizzaAndPrepared = Order.empty().addProducts(Pizza.empty());
+        Purchase pizzaAndPrepared = Purchase.empty().addProducts(Pizza.empty());
         pizzaAndPrepared.setPrepared(true);
         prepared.add(pizzaAndPrepared);
 
-        Order cheesePizzaAndPrepared = Order.empty().addProducts(Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE, Ingredient.CHEESE));
+        Purchase cheesePizzaAndPrepared = Purchase.empty().addProducts(Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE, Ingredient.CHEESE));
         cheesePizzaAndPrepared.setPrepared(true);
         prepared.add(cheesePizzaAndPrepared);
 
-        for (Order order : prepared) {
-            txManager.addEntity(session, order);
+        for (Purchase purchase : prepared) {
+            customer.addPurchase(purchase);
         }
 
-        for (Order order : unprepared) {
-            txManager.addEntity(session, order);
+        for (Purchase purchase : unprepared) {
+            customer.addPurchase(purchase);
         }
 
-        List<Order> unpreparedOrders = CookOperator.getUnpreparedOrders(session);
+        txManager.addEntity(session, customer);
 
-        assertThat(unpreparedOrders).hasSize(unprepared.size());
-        assertThat(unpreparedOrders).hasSameElementsAs(unprepared);
+        List<Purchase> unpreparedPurchases = CookOperator.getUnpreparedPurchases(session);
+
+        assertThat(unpreparedPurchases).hasSize(unprepared.size());
+        assertThat(unpreparedPurchases).hasSameElementsAs(unprepared);
     }
 }

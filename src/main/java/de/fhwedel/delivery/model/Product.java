@@ -4,17 +4,28 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "PRODUCTS")
+@Table(name = "PRODUCT")
 @Inheritance(strategy= InheritanceType.JOINED)
 public abstract class Product {
     private Long id;
+    private Purchase purchase;
 
     public Product() {
     }
 
+    @ManyToOne
+    @JoinColumn(name = "PURCHASE_ID", nullable = false)
+    public Purchase getPurchase() {
+        return purchase;
+    }
+
+    public void setPurchase(Purchase purchase) {
+        this.purchase = purchase;
+    }
+
+
     @Id
-    @SequenceGenerator(name = "PRODUCT_ID_GENERATOR", sequenceName = "PRODUCT_SEQ")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PRODUCT_ID_GENERATOR")
+    @GeneratedValue(strategy=GenerationType.AUTO)
     public Long getId() {
         return id;
     }

@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import java.math.BigDecimal;
 
 @Entity()
-@Table(name = "INGREDIENTS")
+@Table(name = "INGREDIENT")
 public class Ingredient {
 
     public static final Ingredient CHEESE = new Ingredient(1l, "Cheese", new BigDecimal("1.00"));

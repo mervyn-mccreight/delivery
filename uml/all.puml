@@ -23,7 +23,7 @@ class Ingredient {
 Pizza "1" *- "n" Ingredient
 Product <|-- Pizza
 
-class Order {
+class Purchase {
     -Long id
     -Boolean billed
     -Boolean prepared
@@ -31,7 +31,7 @@ class Order {
     +BigDecimal evaluateCost()
 }
 
-Order "1" o- "n" Product
+Purchase "1" o- "n" Product
 
 class Customer {
     -Long id

@@ -1,29 +1,29 @@
 package de.fhwedel.delivery.operation;
 
 import de.fhwedel.delivery.model.Customer;
-import de.fhwedel.delivery.model.Order;
 import de.fhwedel.delivery.model.Product;
+import de.fhwedel.delivery.model.Purchase;
 import de.fhwedel.delivery.transaction.TxManager;
 import org.hibernate.Session;
 
 public class CustomerOperator {
     private static TxManager txManager = new TxManager();
 
-    public static Long order(Session session, Customer customer, Product... products) {
-        Order order = Order.empty().addProducts(products);
-        customer.addOrder(order);
+    public static Long purchase(Session session, Customer customer, Product... products) {
+        Purchase purchase = Purchase.empty().addProducts(products);
+        customer.addPurchase(purchase);
         txManager.addEntity(session, customer);
 
-        return order.getId();
+        return purchase.getId();
     }
 
-    public static Long orderWithOnlinePayment(Session session, Customer customer, Product... products) {
-        Order order = Order.empty().addProducts(products);
-        order.setBilled(true);
-        customer.addOrder(order);
+    public static Long purchaseWithOnlinePayment(Session session, Customer customer, Product... products) {
+        Purchase purchase = Purchase.empty().addProducts(products);
+        purchase.setBilled(true);
+        customer.addPurchase(purchase);
 
         txManager.addEntity(session, customer);
 
-        return order.getId();
+        return purchase.getId();
     }
 }

@@ -11,24 +11,24 @@ import java.util.Collections;
 import java.util.Set;
 
 @Entity
-@Table(name = "ORDERS")
-public class Order {
+@Table(name = "PURCHASE")
+public class Purchase {
     private Long id;
     private Set<Product> products = Sets.newHashSet();
     private boolean billed = false;
     private boolean prepared = false;
     private boolean delivered = false;
+    private Customer customer;
 
-    private Order() {
+    private Purchase() {
     }
 
-    public static Order empty() {
-        return new Order();
+    public static Purchase empty() {
+        return new Purchase();
     }
 
     @Id
-    @SequenceGenerator(name = "ORDER_ID_GENERATOR", sequenceName = "ORDER_SEQ")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ORDER_ID_GENERATOR")
+    @GeneratedValue(strategy=GenerationType.AUTO)
     public Long getId() {
         return id;
     }
@@ -37,9 +37,18 @@ public class Order {
         this.id = id;
     }
 
+    @ManyToOne
+    @JoinColumn(name = "CUSTOMER_ID", nullable = false)
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
     @Column(nullable = false)
-    @OneToMany
-    @JoinColumn(name="ORDER_ID")
+    @OneToMany(mappedBy = "purchase")
     @Cascade({CascadeType.ALL})
     public Set<Product> getProducts() {
         return products;
@@ -49,7 +58,11 @@ public class Order {
         this.products = products;
     }
 
-    public Order addProducts(Product... products) {
+    public Purchase addProducts(Product... products) {
+        for (Product product : products) {
+            product.setPurchase(this);
+        }
+
         Collections.addAll(this.products, products);
         return this;
     }
@@ -91,16 +104,18 @@ public class Order {
             return false;
         }
 
-        Order that = (Order) obj;
+        Purchase that = (Purchase) obj;
 
         return Objects.equal(this.id, that.id)
                 && Objects.equal(this.products, that.products)
-                && Objects.equal(this.billed, that.billed);
+                && Objects.equal(this.billed, that.billed)
+                && Objects.equal(this.delivered, that.delivered)
+                && Objects.equal(this.prepared, that.prepared);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, products, billed);
+        return Objects.hashCode(id, products, billed, delivered, prepared);
     }
 
     public BigDecimal evaluateCost() {

@@ -1,6 +1,6 @@
 package de.fhwedel.delivery.operation;
 
-import de.fhwedel.delivery.model.Order;
+import de.fhwedel.delivery.model.Purchase;
 import de.fhwedel.delivery.transaction.TxManager;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -11,18 +11,18 @@ import java.util.List;
 public class CookOperator {
     private static TxManager txManager = new TxManager();
 
-    public static List<Order> getUnpreparedOrders(Session session) {
-        Criteria criteria = session.createCriteria(Order.class);
+    public static List<Purchase> getUnpreparedPurchases(Session session) {
+        Criteria criteria = session.createCriteria(Purchase.class);
         criteria.add(Restrictions.eq("prepared", false));
         return criteria.list();
     }
 
-    public static void prepareOrder(Session session, Order order) {
-        if (order.isPrepared()) {
-            throw new IllegalStateException(String.format("Order with id %d is already prepared", order.getId()));
+    public static void preparePurchase(Session session, Purchase purchase) {
+        if (purchase.isPrepared()) {
+            throw new IllegalStateException(String.format("Purchase with id %d is already prepared", purchase.getId()));
         }
 
-        order.setPrepared(true);
-        txManager.addEntity(session, order);
+        purchase.setPrepared(true);
+        txManager.addEntity(session, purchase);
     }
 }

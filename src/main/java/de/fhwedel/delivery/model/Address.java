@@ -5,7 +5,7 @@ import com.google.common.base.Objects;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ADDRESSES")
+@Table(name = "ADDRESS")
 public class Address {
     private Long id;
 
@@ -29,8 +29,7 @@ public class Address {
     }
 
     @Id
-    @SequenceGenerator(name = "ADDRESS_ID_GENERATOR", sequenceName = "ADDRESS_SEQ")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ADDRESS_ID_GENERATOR")
+    @GeneratedValue(strategy=GenerationType.AUTO)
     public Long getId() {
         return id;
     }

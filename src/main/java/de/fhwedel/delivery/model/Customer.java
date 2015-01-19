@@ -3,16 +3,18 @@ package de.fhwedel.delivery.model;
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.util.Set;
 
+import static org.hibernate.annotations.CascadeType.ALL;
+import static org.hibernate.annotations.CascadeType.SAVE_UPDATE;
+
 @Entity
-@Table(name = "CUSTOMERS")
+@Table(name = "CUSTOMER")
 public class Customer {
     private Long id;
-    private Set<Order> orders = Sets.newHashSet();
+    private Set<Purchase> purchases = Sets.newHashSet();
     private String firstName;
     private String surName;
     private Address address;
@@ -27,8 +29,7 @@ public class Customer {
     }
 
     @Id
-    @SequenceGenerator(name = "CUSTOMER_ID_GENERATOR", sequenceName = "CUSTOMER_SEQ")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CUSTOMER_ID_GENERATOR")
+    @GeneratedValue(strategy=GenerationType.AUTO)
     public Long getId() {
         return id;
     }
@@ -37,20 +38,20 @@ public class Customer {
         this.id = id;
     }
 
-    @Column(nullable = false)
-    @OneToMany
-    @JoinColumn(name = "CUSTOMER_ID")
-    @Cascade({org.hibernate.annotations.CascadeType.ALL})
-    public Set<Order> getOrders() {
-        return orders;
+    @Column
+    @OneToMany(mappedBy = "customer")
+    @Cascade({ALL})
+    public Set<Purchase> getPurchases() {
+        return purchases;
     }
 
-    public void setOrders(Set<Order> orders) {
-        this.orders = orders;
+    public void setPurchases(Set<Purchase> purchases) {
+        this.purchases = purchases;
     }
 
-    public Customer addOrder(Order order) {
-        orders.add(order);
+    public Customer addPurchase(Purchase purchase) {
+        purchases.add(purchase);
+        purchase.setCustomer(this);
         return this;
     }
 
@@ -73,8 +74,8 @@ public class Customer {
     }
 
     @ManyToOne
-    @JoinColumn(name = "ADDRESS_ID")
-    @Cascade({CascadeType.SAVE_UPDATE})
+    @JoinColumn(name = "ADDRESS_ID", nullable = false)
+    @Cascade({SAVE_UPDATE})
     public Address getAddress() {
         return address;
     }
@@ -85,7 +86,7 @@ public class Customer {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, orders, firstName, surName, address);
+        return Objects.hashCode(id, purchases, firstName, surName, address);
     }
 
     @Override
@@ -101,7 +102,7 @@ public class Customer {
         Customer that = (Customer) obj;
 
         return Objects.equal(this.id, that.id)
-                && Objects.equal(this.orders, that.orders)
+                && Objects.equal(this.purchases, that.purchases)
                 && Objects.equal(this.firstName, that.firstName)
                 && Objects.equal(this.surName, that.surName)
                 && Objects.equal(this.address, that.address);

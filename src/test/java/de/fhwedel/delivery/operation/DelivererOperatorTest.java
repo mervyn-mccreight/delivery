@@ -2,9 +2,7 @@ package de.fhwedel.delivery.operation;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import de.fhwedel.delivery.model.Ingredient;
-import de.fhwedel.delivery.model.Order;
-import de.fhwedel.delivery.model.Pizza;
+import de.fhwedel.delivery.model.*;
 import de.fhwedel.delivery.transaction.SessionManager;
 import de.fhwedel.delivery.transaction.TxManager;
 import org.hibernate.Session;
@@ -22,12 +20,14 @@ public class DelivererOperatorTest {
     private TxManager txManager;
     private SessionFactory sessionFactory;
     private Session session;
+    private Customer customer;
 
     @Before
     public void setUp() throws Exception {
         txManager = new TxManager();
         sessionFactory = SessionManager.createSessionFactory();
         session = sessionFactory.openSession();
+        customer = new Customer("Hans", "Meier", new Address("Trollstraße 1337", "12345", "Trollstadt", "Trololo"));
     }
 
     @After
@@ -37,85 +37,90 @@ public class DelivererOperatorTest {
     }
 
     @Test
-    public void testDeliverOrder() throws Exception {
-        Order empty = Order.empty();
+    public void testDeliverPurchase() throws Exception {
+        Purchase empty = Purchase.empty();
+        customer.addPurchase(empty);
 
-        txManager.addEntity(session, empty);
+        txManager.addEntity(session, customer);
 
-        CookOperator.prepareOrder(session, Iterables.getOnlyElement(CookOperator.getUnpreparedOrders(session)));
+        CookOperator.preparePurchase(session, Iterables.getOnlyElement(CookOperator.getUnpreparedPurchases(session)));
 
-        DelivererOperator.deliverOrder(session, Iterables.getOnlyElement(DelivererOperator.findOrdersReadyToDeliver(session)));
+        DelivererOperator.deliverPurchase(session, Iterables.getOnlyElement(DelivererOperator.findPurchasesReadyToDeliver(session)));
 
-        Set<Order> tableEntities = txManager.getTableEntities(session, Order.class);
-        Order onlyElement = Iterables.getOnlyElement(tableEntities);
+        Set<Purchase> tableEntities = txManager.getTableEntities(session, Purchase.class);
+        Purchase onlyElement = Iterables.getOnlyElement(tableEntities);
 
         assertThat(onlyElement.isDelivered()).isTrue();
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testDeliverUnpreparedOrder() throws Exception {
-        Order empty = Order.empty();
+    public void testDeliverUnpreparedPurchase() throws Exception {
+        Purchase empty = Purchase.empty();
+        customer.addPurchase(empty);
 
-        txManager.addEntity(session, empty);
+        txManager.addEntity(session, customer);
 
-        DelivererOperator.deliverOrder(session, Iterables.getOnlyElement(txManager.getTableEntities(session, Order.class)));
+        DelivererOperator.deliverPurchase(session, Iterables.getOnlyElement(txManager.getTableEntities(session, Purchase.class)));
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testDeliverAlreadyDeliveredOrder() throws Exception {
-        Order empty = Order.empty();
+    public void testDeliverAlreadyDeliveredPurchase() throws Exception {
+        Purchase empty = Purchase.empty();
+        customer.addPurchase(empty);
 
-        txManager.addEntity(session, empty);
+        txManager.addEntity(session, customer);
 
-        CookOperator.prepareOrder(session, Iterables.getOnlyElement(CookOperator.getUnpreparedOrders(session)));
+        CookOperator.preparePurchase(session, Iterables.getOnlyElement(CookOperator.getUnpreparedPurchases(session)));
 
-        DelivererOperator.deliverOrder(session, Iterables.getOnlyElement(DelivererOperator.findOrdersReadyToDeliver(session)));
+        DelivererOperator.deliverPurchase(session, Iterables.getOnlyElement(DelivererOperator.findPurchasesReadyToDeliver(session)));
 
-        DelivererOperator.deliverOrder(session, Iterables.getOnlyElement(txManager.getTableEntities(session, Order.class)));
+        DelivererOperator.deliverPurchase(session, Iterables.getOnlyElement(txManager.getTableEntities(session, Purchase.class)));
     }
 
     @Test
-    public void testFindOrdersReadyToDeliver() throws Exception {
-        List<Order> unprepared = Lists.newArrayList();
-        unprepared.add(Order.empty().addProducts(Pizza.empty()));
-        unprepared.add(Order.empty().addProducts(Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE, Ingredient.CHEESE)));
+    public void testFindPurchasesReadyToDeliver() throws Exception {
+        List<Purchase> unprepared = Lists.newArrayList();
+        unprepared.add(Purchase.empty().addProducts(Pizza.empty()));
+        unprepared.add(Purchase.empty().addProducts(Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE, Ingredient.CHEESE)));
 
-        List<Order> prepared = Lists.newArrayList();
-        Order emptyAndPrepared = Order.empty();
+        List<Purchase> prepared = Lists.newArrayList();
+        Purchase emptyAndPrepared = Purchase.empty();
         emptyAndPrepared.setPrepared(true);
         prepared.add(emptyAndPrepared);
 
-        Order pizzaAndPrepared = Order.empty().addProducts(Pizza.empty());
+        Purchase pizzaAndPrepared = Purchase.empty().addProducts(Pizza.empty());
         pizzaAndPrepared.setPrepared(true);
         prepared.add(pizzaAndPrepared);
 
-        Order cheesePizzaAndPrepared = Order.empty().addProducts(Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE, Ingredient.CHEESE));
+        Purchase cheesePizzaAndPrepared = Purchase.empty().addProducts(Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE, Ingredient.CHEESE));
         cheesePizzaAndPrepared.setPrepared(true);
         prepared.add(cheesePizzaAndPrepared);
 
-        List<Order> delivered = Lists.newArrayList();
+        List<Purchase> delivered = Lists.newArrayList();
 
-        Order foo = Order.empty();
+        Purchase foo = Purchase.empty();
         foo.setPrepared(true);
         foo.setDelivered(true);
 
         delivered.add(foo);
 
-        for (Order order : delivered) {
-            txManager.addEntity(session, order);
+        for (Purchase purchase : delivered) {
+            customer.addPurchase(purchase);
         }
 
-        for (Order order : prepared) {
-            txManager.addEntity(session, order);
+        for (Purchase purchase : prepared) {
+            customer.addPurchase(purchase);
         }
 
-        for (Order order : unprepared) {
-            txManager.addEntity(session, order);
+        for (Purchase purchase : unprepared) {
+            customer.addPurchase(purchase);
         }
 
-        List<Order> ordersReadyToDeliver = DelivererOperator.findOrdersReadyToDeliver(session);
+        txManager.addEntity(session, customer);
 
-        assertThat(ordersReadyToDeliver).hasSize(prepared.size());
-        assertThat(ordersReadyToDeliver).hasSameElementsAs(prepared);
+        List<Purchase> purchasesReadyToDeliver = DelivererOperator.findPurchasesReadyToDeliver(session);
+
+        assertThat(purchasesReadyToDeliver).hasSize(prepared.size());
+        assertThat(purchasesReadyToDeliver).hasSameElementsAs(prepared);
     }
 }

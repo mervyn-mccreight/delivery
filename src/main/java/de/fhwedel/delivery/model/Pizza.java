@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 @Entity
-@Table(name = "PIZZAS")
+@Table(name = "PIZZA")
 @PrimaryKeyJoinColumn(name="ID")
 public class Pizza extends Product {
     private Collection<Ingredient> ingredients;

@@ -55,7 +55,7 @@
         <mapping class="de.fhwedel.delivery.model.Ingredient"/>
         <mapping class="de.fhwedel.delivery.model.Pizza"/>
         <mapping class="de.fhwedel.delivery.model.Product"/>
-        <mapping class="de.fhwedel.delivery.model.Order"/>
+        <mapping class="de.fhwedel.delivery.model.Purchase"/>
         <mapping class="de.fhwedel.delivery.model.Customer"/>
         <mapping class="de.fhwedel.delivery.model.Address" />
     </session-factory>

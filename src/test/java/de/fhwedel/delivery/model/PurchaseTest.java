@@ -4,22 +4,22 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class OrderTest {
+public class PurchaseTest {
 
     @Test
     public void nonEquality() throws Exception {
-        Order given = Order.empty();
+        Purchase given = Purchase.empty();
         Object anotherObject = new Object();
         assertThat(given).isNotEqualTo(anotherObject);
 
-        Order anotherOrder = Order.empty().addProducts(Pizza.empty());
-        assertThat(given).isNotEqualTo(anotherOrder);
+        Purchase anotherPurchase = Purchase.empty().addProducts(Pizza.empty());
+        assertThat(given).isNotEqualTo(anotherPurchase);
     }
 
     @Test
     public void simpleEquality() throws Exception {
-        Order given = Order.empty();
-        Order equal = Order.empty();
+        Purchase given = Purchase.empty();
+        Purchase equal = Purchase.empty();
 
         assertThat(given).isEqualTo(equal);
         assertThat(given.hashCode()).isEqualTo(equal.hashCode());
@@ -27,8 +27,8 @@ public class OrderTest {
 
     @Test
     public void complexEquality() throws Exception {
-        Order given = Order.empty().addProducts(Pizza.empty().addIngredients(Ingredient.CHEESE));
-        Order equal = Order.empty().addProducts(Pizza.empty().addIngredients(Ingredient.CHEESE));
+        Purchase given = Purchase.empty().addProducts(Pizza.empty().addIngredients(Ingredient.CHEESE));
+        Purchase equal = Purchase.empty().addProducts(Pizza.empty().addIngredients(Ingredient.CHEESE));
 
         assertThat(given).isEqualTo(equal);
         assertThat(given.hashCode()).isEqualTo(equal.hashCode());
@@ -36,7 +36,7 @@ public class OrderTest {
 
     @Test
     public void emptyCost() throws Exception {
-        Order empty = Order.empty();
+        Purchase empty = Purchase.empty();
 
         assertThat(empty.evaluateCost()).isZero();
     }
@@ -45,11 +45,11 @@ public class OrderTest {
     public void onePizzaCost() throws Exception {
         Pizza pizza = Pizza.empty().addIngredients(Ingredient.CHEESE, Ingredient.SALAMI);
 
-        Order order = Order.empty();
-        Order result;
-        order.addProducts(pizza);
+        Purchase purchase = Purchase.empty();
+        Purchase result;
+        purchase.addProducts(pizza);
 
-        assertThat(order.evaluateCost()).isEqualTo(pizza.evaluateCost());
+        assertThat(purchase.evaluateCost()).isEqualTo(pizza.evaluateCost());
     }
 
     @Test
@@ -57,12 +57,12 @@ public class OrderTest {
         Pizza pizza1 = Pizza.empty().addIngredients(Ingredient.CHEESE, Ingredient.SALAMI);
         Pizza pizza2 = Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE, Ingredient.SALAMI);
 
-        Order order = Order.empty();
-        Order result1;
-        order.addProducts(pizza1);
-        Order result;
-        order.addProducts(pizza2);
+        Purchase purchase = Purchase.empty();
+        Purchase result1;
+        purchase.addProducts(pizza1);
+        Purchase result;
+        purchase.addProducts(pizza2);
 
-        assertThat(order.evaluateCost()).isEqualTo(pizza1.evaluateCost().add(pizza2.evaluateCost()));
+        assertThat(purchase.evaluateCost()).isEqualTo(pizza1.evaluateCost().add(pizza2.evaluateCost()));
     }
 }

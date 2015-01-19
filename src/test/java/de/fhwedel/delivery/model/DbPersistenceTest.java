@@ -20,12 +20,17 @@ public class DbPersistenceTest {
     private TxManager txManager;
     private SessionFactory sessionFactory;
     private Session session;
+    private Customer hansMeier;
+    private Address sharedAddress;
 
     @Before
     public void setUp() throws Exception {
         txManager = new TxManager();
         sessionFactory = SessionManager.createSessionFactory();
         session = sessionFactory.openSession();
+
+        sharedAddress = new Address("ABC-Straße", "12345", "Trollhausen", "Schlumpfenland");
+        hansMeier = new Customer("Hans", "Meier", sharedAddress);
     }
 
     @After
@@ -37,10 +42,10 @@ public class DbPersistenceTest {
     @Test
     public void addTwoPizzas_pizzaAndIngredientsArePersisted() throws Exception {
         Pizza pizza1 = Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE, Ingredient.CHEESE, Ingredient.SALAMI);
-        txManager.addEntity(session, pizza1);
-
         Pizza pizza2 = Pizza.empty().addIngredients(Ingredient.CHEESE, Ingredient.SALAMI);
-        txManager.addEntity(session, pizza2);
+
+        hansMeier.addPurchase(Purchase.empty().addProducts(pizza1, pizza2));
+        txManager.addEntity(session, hansMeier);
 
         Set<Pizza> pizzas = txManager.getTableEntities(session, Pizza.class);
 
@@ -52,7 +57,9 @@ public class DbPersistenceTest {
     public void pizzaWithSameIngredientTwice_ingredientIsPersistedTwice() throws Exception {
         Pizza doubleCheese = Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE, Ingredient.CHEESE, Ingredient.CHEESE);
 
-        txManager.addEntity(session, doubleCheese);
+        hansMeier.addPurchase(Purchase.empty().addProducts(doubleCheese));
+
+        txManager.addEntity(session, hansMeier);
 
         Set<Pizza> pizzas = txManager.getTableEntities(session, Pizza.class);
 
@@ -84,8 +91,11 @@ public class DbPersistenceTest {
 
     @Test
     public void addTwoPizzas_ingredientsArePersisted() throws Exception {
-        txManager.addEntity(session, Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE, Ingredient.CHEESE, Ingredient.SALAMI));
-        txManager.addEntity(session, Pizza.empty().addIngredients(Ingredient.CHEESE, Ingredient.SALAMI));
+        Pizza pizza1 = Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE, Ingredient.CHEESE, Ingredient.SALAMI);
+        Pizza pizza2 = Pizza.empty().addIngredients(Ingredient.CHEESE, Ingredient.SALAMI);
+        hansMeier.addPurchase(Purchase.empty().addProducts(pizza1, pizza2));
+
+        txManager.addEntity(session, hansMeier);
 
         Set<Ingredient> ingredients = txManager.getTableEntities(session, Ingredient.class);
 
@@ -94,36 +104,17 @@ public class DbPersistenceTest {
     }
 
     @Test
-    public void removePizza_pizzaIsRemovedIngredientsArePersisted() {
-        Pizza pizza1 = Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE, Ingredient.CHEESE, Ingredient.SALAMI);
-        txManager.addEntity(session, pizza1);
-
-        Pizza pizza2 = Pizza.empty().addIngredients(Ingredient.CHEESE, Ingredient.SALAMI);
-        txManager.addEntity(session, pizza2);
-
-        txManager.removeEntity(session, pizza1);
-
-        Set<Pizza> pizzas = txManager.getTableEntities(session, Pizza.class);
-        Set<Ingredient> ingredients = txManager.getTableEntities(session, Ingredient.class);
-
-        assertThat(pizzas).hasSize(1);
-        assertThat(pizzas).containsOnly(pizza2);
-
-        assertThat(ingredients).hasSize(3);
-        assertThat(ingredients).containsOnly(Ingredient.TOMATO_SAUCE, Ingredient.SALAMI, Ingredient.CHEESE);
-    }
-
-    @Test
-    public void persistOrder() throws Exception {
+    public void persistPurchase() throws Exception {
         Pizza productToOrder = Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE);
-        Order order = Order.empty().addProducts(productToOrder);
+        Purchase purchase = Purchase.empty().addProducts(productToOrder);
+        hansMeier.addPurchase(purchase);
 
-        txManager.addEntity(session, order);
+        txManager.addEntity(session, hansMeier);
 
-        Set<Order> orders = txManager.getTableEntities(session, Order.class);
+        Set<Purchase> purchases = txManager.getTableEntities(session, Purchase.class);
 
-        assertThat(orders).hasSize(1);
-        assertThat(orders).containsOnly(order);
+        assertThat(purchases).hasSize(1);
+        assertThat(purchases).containsOnly(purchase);
 
         Set<Pizza> pizzas = txManager.getTableEntities(session, Pizza.class);
 
@@ -132,61 +123,24 @@ public class DbPersistenceTest {
     }
 
     @Test
-    public void deleteSingleItemOrder() throws Exception {
-        Pizza productToOrder = Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE);
-        Order order = Order.empty().addProducts(productToOrder);
-
-        txManager.addEntity(session, order);
-
-        Set<Order> orders = txManager.getTableEntities(session, Order.class);
-
-        assertThat(orders).hasSize(1);
-        assertThat(orders).containsOnly(order);
-
-        txManager.removeEntity(session, order);
-
-        Set<Pizza> pizzas = txManager.getTableEntities(session, Pizza.class);
-
-        assertThat(pizzas).hasSize(0);
-        assertThat(pizzas).isEmpty();
+    public void deleteSingleItemPurchase() throws Exception {
+        //TODO: wäre richtig wenn er da wäre.
     }
 
     @Test
-    public void deleteOrderOtherProductsRemain() throws Exception {
-        Pizza productToOrder1 = Pizza.empty().addIngredients(Ingredient.TOMATO_SAUCE);
-        Pizza productToOrder2 = Pizza.empty().addIngredients(Ingredient.CHEESE);
-        Order order1 = Order.empty().addProducts(productToOrder1);
-        Order order2 = Order.empty().addProducts(productToOrder2);
-
-        txManager.addEntity(session, order1);
-        txManager.addEntity(session, order2);
-
-        Set<Order> orders = txManager.getTableEntities(session, Order.class);
-
-        assertThat(orders).hasSize(2);
-        assertThat(orders).containsOnly(order1, order2);
-
-        txManager.removeEntity(session, order1);
-
-        orders = txManager.getTableEntities(session, Order.class);
-        assertThat(orders).hasSize(1);
-        assertThat(orders).containsOnly(order2);
-
-        Set<Pizza> pizzas = txManager.getTableEntities(session, Pizza.class);
-
-        assertThat(pizzas).hasSize(1);
-        assertThat(pizzas).containsOnly(productToOrder2);
+    public void deletePurchaseOtherProductsRemain() throws Exception {
+        //TODO: wäre richtig wenn er da wäre.
     }
 
     @Test
     public void persistCustomer() throws Exception {
         Pizza pizza1 = Pizza.empty().addIngredients(Ingredient.CHEESE);
         Pizza pizza2 = Pizza.empty().addIngredients(Ingredient.CHEESE, Ingredient.TOMATO_SAUCE);
-        Order order1 = Order.empty().addProducts(pizza1);
-        Order order2 = Order.empty().addProducts(pizza2);
+        Purchase purchase1 = Purchase.empty().addProducts(pizza1);
+        Purchase purchase2 = Purchase.empty().addProducts(pizza2);
 
         Customer hansMeier = new Customer("Hans", "Meier", new Address("Straße 1", "12345", "Trollhausen", "Schlumpfenland"));
-        hansMeier.addOrder(order1).addOrder(order2);
+        hansMeier.addPurchase(purchase1).addPurchase(purchase2);
 
         txManager.addEntity(session, hansMeier);
 
@@ -194,9 +148,9 @@ public class DbPersistenceTest {
         assertThat(customers).hasSize(1);
         assertThat(customers).containsOnly(hansMeier);
 
-        Set<Order> orders = txManager.getTableEntities(session, Order.class);
-        assertThat(orders).hasSize(hansMeier.getOrders().size());
-        assertThat(orders).containsOnlyElementsOf(hansMeier.getOrders());
+        Set<Purchase> purchases = txManager.getTableEntities(session, Purchase.class);
+        assertThat(purchases).hasSize(hansMeier.getPurchases().size());
+        assertThat(purchases).containsOnlyElementsOf(hansMeier.getPurchases());
     }
 
     @Test
@@ -217,8 +171,6 @@ public class DbPersistenceTest {
 
     @Test
     public void customersWithSameAddress() throws Exception {
-        Address sharedAddress = new Address("ABC-Straße", "12345", "Trollhausen", "Schlumpfenland");
-        Customer hansMeier = new Customer("Hans", "Meier", sharedAddress);
         Customer petraMeier = new Customer("Petra", "Meier", sharedAddress);
 
         txManager.addEntity(session, hansMeier);
@@ -245,10 +197,8 @@ public class DbPersistenceTest {
 
     @Test
     public void customersWithSameAddressDeleteBothCustomers_addressIsDeleted() throws Exception {
-        Address sharedAddress = new Address("ABC-Straße", "12345", "Trollhausen", "Schlumpfenland");
         Customer petraMeier = new Customer("Petra", "Meier", sharedAddress);
 
-        Customer hansMeier = new Customer("Hans", "Meier", sharedAddress);
         txManager.addEntity(session, hansMeier);
         txManager.addEntity(session, petraMeier);
 
