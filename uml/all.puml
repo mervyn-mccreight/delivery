@@ -20,7 +20,7 @@ class Ingredient {
     -BigDecimal cost
 }
 
-Pizza "1" *-- "1..n" Ingredient
+Pizza "  1  " *-left- "   1..n " Ingredient
 Product <|-- Pizza
 
 class Purchase {
@@ -31,7 +31,7 @@ class Purchase {
     +BigDecimal evaluateCost()
 }
 
-Purchase "1" o-- "1..n" Product
+Purchase "1  " o-left- "1..n" Product
 
 class Customer {
     -Long id
@@ -39,7 +39,7 @@ class Customer {
     -String surName
 }
 
-Customer "1" *-- "1..n" Purchase
+Customer "1   " *-left- "1..n " Purchase
 
 class Address {
     -Long id
@@ -49,6 +49,6 @@ class Address {
     -String country
 }
 
-Customer "n" o-- "1..n" Address
+Customer "n  " o-- "1..n " Address
 
 @enduml
